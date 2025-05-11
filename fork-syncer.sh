@@ -16,7 +16,10 @@ github_username="${GITHUB_REPOSITORY_OWNER:-$(gh api user --jq '.login')}"
 
 repo_names=$(gh repo list --fork --limit 9999 --json name --jq '.[].name' "${github_username}")
 
-while read -r repo_name; do
+while read -r repo_name; do {
   echo "Looking at ${repo_name}..."
   gh repo sync "${github_username}/${repo_name}"
+} &
 done <<< "${repo_names}"
+
+wait
