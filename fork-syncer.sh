@@ -18,7 +18,10 @@ repo_names=$(gh repo list --fork --limit 9999 --json name --jq '.[].name' "${git
 
 while read -r repo_name; do {
   echo "Looking at ${repo_name}..."
-  gh repo sync "${github_username}/${repo_name}"
+  if ! gh repo sync "${github_username}/${repo_name}"; then
+    echo "::error::Failed to sync ${repo_name}" 1>&2
+    exit 1
+  fi
 } &
 done <<< "${repo_names}"
 
